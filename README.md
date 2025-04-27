@@ -37,4 +37,4 @@ source ~/.bashrc # or restart terminal instead
     rye sync
 
 ### 3. Activate Environment
-    rye shell
+    source .venv/bin/activate
