@@ -1,0 +1,51 @@
+[project]
+name = "mlops-course-project"
+version = "0.1.0"
+description = "MLOps course project related to news aggregation"
+authors = [
+    { name = "abadriev", email = "aizat.badriev@red-soft.ru" }
+]
+dependencies = [
+    "sentence-transformers>=4.1.0",
+    "faiss-cpu>=1.10.0",
+    "numpy>=2.2.5",
+    "pandas>=2.2.3",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+virtual = true
+dev-dependencies = [
+    "flake8>=7.2.0",
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "pre-commit>=4.2.0",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mlops_course_project"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+include = '\.py$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+line_length = 88
+
+[tool.rye.scripts]
+format = "isort . && black ."
+lint = "flake8 ."
+# test = "pytest tests/"
