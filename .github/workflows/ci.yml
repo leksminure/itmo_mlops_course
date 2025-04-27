@@ -33,12 +33,12 @@ jobs:
     needs: lint-format
     steps:
     - uses: eifinger/setup-rye@v4
-
+    - uses: actions/checkout@v4
     - name: Build wheel
       run: rye build
 
     - name: Publish package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: python-package
         path: dist/*.whl
@@ -75,13 +75,12 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: eifinger/setup-rye@v4
-
+    - uses: actions/checkout@v4
     - name: Setup MkDocs
       run: rye add mkdocs --dev && rye sync
 
     - name: Build docs
       run: |
-        mkdir -p site/_site
         rye run mkdocs build --site-dir site/_site
 
     - name: Deploy to GitHub Pages
