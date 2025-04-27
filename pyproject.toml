@@ -17,7 +17,6 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-virtual = true
 dev-dependencies = [
     "ruff>=0.4.4",
     "pre-commit>=4.2.0",
