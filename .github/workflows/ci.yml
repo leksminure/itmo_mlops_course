@@ -20,8 +20,8 @@ jobs:
 
     - name: Setup Rye
       run: |
-        curl -sSf https://rye-up.com/get | bash
-        echo "$HOME/.rye/env" >> $GITHUB_PATH
+        curl -sSf https://rye-up.com/get | RYE_INSTALL_OPTION="--yes" bash
+        echo "$HOME/.rye/shims" >> $GITHUB_PATH
 
     - name: Sync dependencies
       run: rye sync --no-lock
