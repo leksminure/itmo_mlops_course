@@ -32,18 +32,17 @@ packages = ["src/mlops_course_project"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-select = [
+lint.select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
     "F",   # pyflakes
     "I",   # isort
     "UP",  # pyupgrade
     "C90", # mccabe complexity
-    "BLK", # black
 ]
 extend-exclude = [".venv"]
-fixable = ["ALL"]
-unfixable = []
+lint.fixable = ["ALL"]
+lint.unfixable = []
 
 [tool.ruff.lint.isort]
 known-first-party = ["mlops_course_project"]
