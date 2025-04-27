@@ -21,6 +21,7 @@ virtual = true
 dev-dependencies = [
     "ruff>=0.4.4",
     "pre-commit>=4.2.0",
+    "mkdocs>=1.6.1",
 ]
 
 [tool.hatch.metadata]
@@ -40,9 +41,9 @@ lint.select = [
     "UP",  # pyupgrade
     "C90", # mccabe complexity
 ]
-extend-exclude = [".venv"]
 lint.fixable = ["ALL"]
 lint.unfixable = []
+extend-exclude = [".venv"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["mlops_course_project"]
