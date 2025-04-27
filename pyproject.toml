@@ -2,9 +2,6 @@
 name = "mlops-course-project"
 version = "0.1.0"
 description = "MLOps course project related to news aggregation"
-authors = [
-    { name = "abadriev", email = "aizat.badriev@red-soft.ru" }
-]
 dependencies = [
     "sentence-transformers>=4.1.0",
     "faiss-cpu>=1.10.0",
@@ -22,9 +19,7 @@ build-backend = "hatchling.build"
 managed = true
 virtual = true
 dev-dependencies = [
-    "flake8>=7.2.0",
-    "black>=25.1.0",
-    "isort>=6.0.1",
+    "ruff>=0.4.4",
     "pre-commit>=4.2.0",
 ]
 
@@ -34,18 +29,25 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["src/mlops_course_project"]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py312"]
-include = '\.py$'
+target-version = "py312"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "C90", # mccabe complexity
+    "BLK", # black
+]
+extend-exclude = [".venv"]
+fixable = ["ALL"]
+unfixable = []
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-include_trailing_comma = true
-line_length = 88
+[tool.ruff.lint.isort]
+known-first-party = ["mlops_course_project"]
 
 [tool.rye.scripts]
-format = "isort . && black ."
-lint = "flake8 ."
-# test = "pytest tests/"
+format = "ruff check . --fix"
+lint = "ruff check ."
