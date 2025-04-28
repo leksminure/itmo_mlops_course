@@ -1,8 +1,16 @@
 site_name: ML Docs
-site_description: Docs for MLOps course project
+site_url: https://leksminure.github.io/itmo_mlops_course/
 repo_url: https://github.com/leksminure/itmo_mlops_course
 repo_name: itmo_mlops_course
+
 theme:
-  name: mkdocs
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.indexes
+
 nav:
   - Home: index.md
+
+docs_dir: docs
+site_dir: site

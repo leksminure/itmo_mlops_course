@@ -77,20 +77,35 @@ jobs:
       contents: write
       pages: write
       id-token: write
-    steps:
-    - uses: actions/checkout@v4
-    - uses: eifinger/setup-rye@v4
-    - name: Setup MkDocs
-      run: rye add mkdocs --dev && rye sync
-      
-    - name: Build docs
-      run: |
-        mkdir -p site/_site
-        rye run mkdocs build --site-dir site/_site
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./site/_site
-        force_orphan: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rye
+        uses: eifinger/setup-rye@v4
+
+      - name: Install docs dependencies
+        run: |
+          rye add --dev mkdocs mkdocs-material
+          rye sync
+
+      - name: Build documentation
+        run: rye run mkdocs build --strict
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
