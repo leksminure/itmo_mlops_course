@@ -74,8 +74,8 @@ jobs:
     needs: [build-package, docker-build]
     if: github.ref == 'refs/heads/main'
     steps:
-    - uses: eifinger/setup-rye@v4
     - uses: actions/checkout@v4
+    - uses: eifinger/setup-rye@v4
     - name: Setup MkDocs
       run: rye add mkdocs --dev && rye sync
 
