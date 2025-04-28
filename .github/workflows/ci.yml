@@ -73,14 +73,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-package, docker-build]
     if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     steps:
     - uses: actions/checkout@v4
     - uses: eifinger/setup-rye@v4
-    - name: Setup MkDocs
-      run: rye add mkdocs --dev && rye sync
 
     - name: Build docs
       run: |
+        mkdir -p site/_site
         rye run mkdocs build --site-dir site/_site
 
     - name: Deploy to GitHub Pages
@@ -88,3 +91,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./site/_site
+        force_orphan: true
