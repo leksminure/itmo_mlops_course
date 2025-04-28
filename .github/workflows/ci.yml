@@ -80,7 +80,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: eifinger/setup-rye@v4
-
+    - name: Setup MkDocs
+      run: rye add mkdocs --dev && rye sync
+      
     - name: Build docs
       run: |
         mkdir -p site/_site
