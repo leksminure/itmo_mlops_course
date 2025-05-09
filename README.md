@@ -1,6 +1,6 @@
 # MLOps course project
 
-This repository contains the ML experiments code for the Smart-Parser, a service designed to parse, summarize, and aggregate posts from Telegram channels.
+This repository contains the ML experiments code for the news topic classification task.
 
 ## Development Workflow:
 
@@ -38,3 +38,24 @@ source ~/.bashrc # or restart terminal instead
 
 ### 3. Activate Environment
     source .venv/bin/activate
+
+## Git LFS setup
+
+**1. Install & Setup**  
+```bash
+# Install
+brew install git-lfs       # macOS
+sudo apt-get install git-lfs  # Ubuntu
+git lfs install            # Initialize
+```
+**2. Track Files**  
+```bash
+git lfs track "*.pt" "*.h5" "data/**" "models/**"  # ML files/dirs
+git add .gitattributes && git commit -m "Add LFS tracking"
+```
+**3. Standard Workflow**  
+```bash
+git add large_file.pt   # LFS auto-handles tracked files
+git commit -m "Add model"
+git push
+```
