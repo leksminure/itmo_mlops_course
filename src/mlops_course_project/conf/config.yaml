@@ -1,0 +1,19 @@
+defaults:
+  - processing: soft
+  - training: default
+  - evaluate: default
+  - _self_
+
+splitting:
+  initial_test_size: 0.4
+  val_test_ratio: 0.5
+  random_state: 42
+
+paths:
+  base_dir: "data/"
+  raw_data: "${paths.base_dir}/raw/lenta_ru_10k_sample.csv"
+  processed_data: "${paths.base_dir}/processed/"
+  models_dir: "models/"
+
+dataset:
+  sample_size: 1000
