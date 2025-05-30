@@ -1,0 +1,6 @@
+**
+!src/**
+!requirements*.lock
+!pyproject.toml
+!README.md
+!.git
