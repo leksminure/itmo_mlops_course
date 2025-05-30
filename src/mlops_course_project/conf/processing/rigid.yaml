@@ -1,0 +1,26 @@
+name: "rigid"
+tags: ["lemmatization", "keep nouns only"]
+description: "Experiment providing rigid processing"
+text_columns: ["title", "text"]
+target_column: "topic"
+lemmatization:
+  enabled: true
+  keep_only_nouns: true
+
+cleaning:
+  fix_unicode: true
+  to_ascii: false
+  lower: true
+  no_line_breaks: true
+  no_urls: true
+  no_emails: true
+  no_phone_numbers: true
+  no_numbers: true
+  no_digits: true
+  no_currency_symbols: true
+  no_punct: true
+  replace_with_url: "<URL>"
+  replace_with_email: "<EMAIL>"
+  replace_with_phone_number: "<PHONE>"
+  replace_with_punct: " "
+  lang: 'ru'
