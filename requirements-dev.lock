@@ -21,6 +21,7 @@ argparse-dataclass==2.0.0
     # via snakemake-interface-common
     # via snakemake-interface-executor-plugins
 attrs==25.3.0
+    # via clearml
     # via jsonschema
     # via referencing
 certifi==2025.4.26
@@ -30,6 +31,8 @@ cfgv==3.4.0
 charset-normalizer==3.4.1
     # via requests
 clean-text==0.6.0
+    # via mlops-course-project
+clearml==2.0.0
     # via mlops-course-project
 click==8.1.8
     # via mkdocs
@@ -70,6 +73,8 @@ fsspec==2025.3.2
     # via torch
 ftfy==6.3.1
     # via clean-text
+furl==2.1.4
+    # via clearml
 ghp-import==2.1.0
     # via mkdocs
 gitdb==4.0.12
@@ -100,6 +105,7 @@ joblib==1.4.2
     # via nltk
     # via scikit-learn
 jsonschema==4.23.0
+    # via clearml
     # via nbformat
     # via snakemake
 jsonschema-specifications==2025.4.1
@@ -131,6 +137,7 @@ nltk==3.9.1
 nodeenv==1.9.1
     # via pre-commit
 numpy==2.2.5
+    # via clearml
     # via faiss-cpu
     # via mlops-course-project
     # via optuna
@@ -176,6 +183,8 @@ omegaconf==2.3.0
     # via hydra-core
 optuna==4.3.0
     # via mlops-course-project
+orderedmultidict==1.0.1
+    # via furl
 packaging==25.0
     # via faiss-cpu
     # via huggingface-hub
@@ -189,9 +198,12 @@ pandarallel==1.6.5
 pandas==2.2.3
     # via mlops-course-project
     # via pandarallel
+pathlib2==2.3.7.post1
+    # via clearml
 pathspec==0.12.1
     # via mkdocs
 pillow==11.2.1
+    # via clearml
     # via sentence-transformers
 plac==1.4.5
     # via yte
@@ -201,20 +213,27 @@ platformdirs==4.3.7
     # via virtualenv
 pre-commit==4.2.0
 psutil==7.0.0
+    # via clearml
     # via pandarallel
     # via snakemake
 pulp==3.1.1
     # via snakemake
+pyjwt==2.10.1
+    # via clearml
 pymorphy3==2.0.3
     # via mlops-course-project
 pymorphy3-dicts-ru==2.4.417150.4580142
     # via pymorphy3
+pyparsing==3.2.3
+    # via clearml
 python-dateutil==2.9.0.post0
+    # via clearml
     # via ghp-import
     # via pandas
 pytz==2025.2
     # via pandas
 pyyaml==6.0.2
+    # via clearml
     # via conda-inject
     # via huggingface-hub
     # via mkdocs
@@ -229,12 +248,14 @@ pyyaml==6.0.2
 pyyaml-env-tag==0.1
     # via mkdocs
 referencing==0.36.2
+    # via clearml
     # via jsonschema
     # via jsonschema-specifications
 regex==2024.11.6
     # via nltk
     # via transformers
 requests==2.32.3
+    # via clearml
     # via huggingface-hub
     # via snakemake
     # via transformers
@@ -259,6 +280,10 @@ setuptools==79.0.1
     # via torch
     # via triton
 six==1.17.0
+    # via clearml
+    # via furl
+    # via orderedmultidict
+    # via pathlib2
     # via python-dateutil
 smart-open==7.1.0
     # via snakemake
@@ -320,6 +345,7 @@ typing-extensions==4.13.2
 tzdata==2025.2
     # via pandas
 urllib3==2.4.0
+    # via clearml
     # via requests
 virtualenv==20.30.0
     # via pre-commit

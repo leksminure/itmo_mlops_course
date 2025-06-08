@@ -1,0 +1,5 @@
+project_name: topic_classification
+metric: weighted_f1
+output_dir: "reports/"
+tags:
+  - "eval"

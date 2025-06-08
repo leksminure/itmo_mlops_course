@@ -1,6 +1,7 @@
 # Snakefile
 import os
 from pathlib import Path
+from datetime import datetime
 
 PROCESSING_CONFIGS = [Path(f).stem for f in os.listdir("src/mlops_course_project/conf/processing") if f.endswith(".yaml")]
 GIT_LFS_PATTERNS = [
@@ -15,6 +16,7 @@ TARGETS = [
     *[f"data/processed/{proc}/test_df.csv" for proc in PROCESSING_CONFIGS],
     *[f"models/{proc}/best_model_{proc}.joblib" for proc in PROCESSING_CONFIGS],
     "results/summary.csv",
+    f"reports/clearml_report_{datetime.now().strftime("%Y%m%d")}.txt"
 ]
 
 rule all:
@@ -74,4 +76,12 @@ rule evaluate_models:
         python src/mlops_course_project/evaluate_models.py
         git add {output.summary}
         """
- 
+
+rule generate_report:
+    output:
+        report = f"reports/clearml_report_{datetime.now().strftime("%Y%m%d")}.txt"
+    shell:
+        """
+        python src/mlops_course_project/generate_report_from_clearml.py
+        git add {output.report}
+        """

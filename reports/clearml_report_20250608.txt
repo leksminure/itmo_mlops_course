@@ -1,0 +1,9 @@
+ClearML Evaluation Report (2025-06-08 19:29 UTC)
+Analyzed 3 tasks
+
+Best weighted_f1 scores by dataset:
+
+Overall best weighted_f1: 0.6728
+Best preprocessing: medium
+Best model type: svm
+Task ID: 02c37ae8f7c447e68d1659cd5d5dc1c6

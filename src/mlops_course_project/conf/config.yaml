@@ -2,6 +2,7 @@ defaults:
   - processing: soft
   - training: default
   - evaluate: default
+  - generate_report: default
   - _self_
 
 splitting:

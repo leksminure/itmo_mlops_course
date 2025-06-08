@@ -8,6 +8,7 @@ import os
 import hydra
 from hydra.utils import to_absolute_path
 from omegaconf import DictConfig, OmegaConf
+from clearml import Task
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -39,7 +40,6 @@ def evaluate_models(model_test_pairs, output_dir):
             pred_start = time.time()
             y_pred = pipeline.predict(X_test)
             pred_time = time.time() - pred_start
-            
             report = classification_report(y_true, y_pred, output_dict=True)
             cm = confusion_matrix(y_true, y_pred)
             
@@ -54,8 +54,16 @@ def evaluate_models(model_test_pairs, output_dir):
                 'model_path': model_path,
                 'full_report': report
             }
+            task = Task.init(
+                project_name='topic_classification', 
+                task_name=f'{result["model_type"]}_model_evaluate',
+                tags=["eval", "classic_ml"]
+            )
+            for name, value in result.items():
+                task.upload_artifact(name=name, artifact_object=value)
+            task.close()
             results.append(result)
-            
+
             report_path = Path(output_dir) / f"dataset_{dataset_name}_{model_type}_report.txt"
             with open(report_path, 'w') as f:
                 f.write(f"Тип модели: {model_type}\n")
@@ -85,11 +93,11 @@ def main(cfg: DictConfig):
     models_path = Path(cfg.evaluate.models_dir)
 
     for model_dir in models_path.iterdir():
-        if model_dir.is_file():
-            model_file_path = model_dir.name
-            dataset_name = model_file_path.split("_")[2].split(".")[0]
-            test_data = pd.read_csv(os.path.join(cfg.evaluate.processed_datasets_dir, dataset_name, "test_df.csv")).dropna()
-            model_test_pairs.append((os.path.join(models_path, model_file_path), test_data))
+        if model_dir.is_dir():
+            model_file_name = f"best_model_{model_dir.name}.joblib"
+            dataset_name = model_dir.name
+            test_data = pd.read_csv(os.path.join(cfg.evaluate.processed_datasets_dir, model_dir.name, "test_df.csv")).dropna()
+            model_test_pairs.append((os.path.join(models_path, dataset_name, model_file_name), test_data))
 
     output_dir = Path(cfg.evaluate.validation_results_dir)
     output_dir.mkdir(parents=True, exist_ok=True)

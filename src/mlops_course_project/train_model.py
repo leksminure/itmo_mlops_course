@@ -16,6 +16,7 @@ from pathlib import Path
 import hydra
 from hydra.utils import to_absolute_path
 from omegaconf import DictConfig, OmegaConf
+from clearml import OutputModel, Task
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -109,13 +110,14 @@ class ModelOptimizer:
 
     def _create_best_model(self):
         best_params = self.study.best_params
+        best_train_metric = self.study.best_trial.value
         vectorizer_type = best_params["vectorizer_type"]
         model_type = best_params["model_type"]
         
         vectorizer = self._create_vectorizer(optuna.trial.FixedTrial(best_params), vectorizer_type)
         classifier = self._create_classifier(optuna.trial.FixedTrial(best_params), model_type)
         
-        return Pipeline([('vectorizer', vectorizer), ('classifier', classifier)]), model_type
+        return Pipeline([('vectorizer', vectorizer), ('classifier', classifier)]), model_type, best_params, best_train_metric
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg: DictConfig):
@@ -123,12 +125,13 @@ def main(cfg: DictConfig):
     model_dir.mkdir(parents=True, exist_ok=True)
     
     OmegaConf.register_new_resolver("as_tuple", lambda *args: tuple(args))
-    # OmegaConf.save(cfg, experiment_dir / "config.yaml")
-    
-    # datasets = []
-    # dataset_path = 
+    task = Task.init(
+        project_name='topic_classification', 
+        task_name=f'train_models_{cfg.processing_name}',
+        tags=["train", "classic_ml", "CV"]
+    )
+
     dataset_dir = Path(to_absolute_path(cfg.paths.processed_data)) / cfg.processing_name
-    # for dataset_dir in base_path.iterdir():
     if dataset_dir.is_dir():
         try:
             dataset_name = cfg.processing_name
@@ -136,13 +139,11 @@ def main(cfg: DictConfig):
             val_df = pd.read_csv(dataset_dir / 'val_df.csv').sample(cfg.dataset.sample_size).dropna()
             test_df = pd.read_csv(dataset_dir / 'test_df.csv').sample(cfg.dataset.sample_size).dropna()
             
-            # datasets.append((dataset_name, train_df, val_df, test_df))
             logging.info(f"Loaded dataset: {dataset_name}")
             
         except Exception as e:
             logging.warning(f"Skipped {dataset_dir.name}: {str(e)}")
 
-    # for dataset_name, train_df, val_df, test_df in datasets:
     logging.info(f"\n{'='*40}")
     logging.info(f"Processing dataset: {dataset_name}")
     
@@ -150,7 +151,7 @@ def main(cfg: DictConfig):
     y_train = pd.concat([train_df['topic'], val_df['topic']])
     
     optimizer = ModelOptimizer(cfg)
-    best_pipeline, model_type = optimizer.optimize(X_train, y_train)
+    best_pipeline, model_type, best_params, best_train_metric = optimizer.optimize(X_train, y_train)
     best_pipeline.fit(X_train, y_train)
     
     model_data = {
@@ -160,10 +161,34 @@ def main(cfg: DictConfig):
         'training_date': datetime.now().isoformat(),
         'config': OmegaConf.to_container(cfg)
     }
-
+    task.upload_artifact(
+        name='dataset_name',
+        artifact_object=dataset_name,
+    )
+    task.upload_artifact(
+        name='cv_best_model_type',
+        artifact_object=model_type,
+    )
+    task.upload_artifact(
+        name='X_train',
+        artifact_object=X_train,
+    )
+    task.upload_artifact(
+        name='y_train',
+        artifact_object=y_train,
+    )
+    task.upload_artifact(
+        name='best_hyperparameters',
+        artifact_object=best_params,
+    )
+    task.upload_artifact(
+        name='best_train_weighted_f1_score',
+        artifact_object=best_train_metric,
+    )
     model_path = model_dir / f"best_model_{dataset_name}.joblib"
     joblib.dump(model_data, model_path)
     logging.info(f"Saved model to: {model_path}")
+    task.close()
 
 if __name__ == "__main__":
     main()
