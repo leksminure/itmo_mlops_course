@@ -1,0 +1,16 @@
+name: classic_ml_topic_classifier
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12.3
+  - numpy>=2.2.5
+  - pandas>=2.2.3
+  - nltk>=3.9.1
+  - pandarallel>=1.6.5
+  - pip=24.0
+  - pip:
+    - sentence-transformers>=4.1.0
+    - pymorphy3>=2.0.3
+    - faiss-cpu>=1.10.0
+    - clean-text>=0.6.0
