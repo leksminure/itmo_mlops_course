@@ -139,9 +139,9 @@ local_csv = preprocess_task.artifacts['data'].get_local_copy()
 
 5. **Measure Efficiency Metrics**  
    Run performance analyzer for a specific model:
-   ```bash
+```bash
 perf_analyzer -m "medium" -u "localhost:8000" —concurrency-range=1 —measurement "20000" —input-data "/client/test_data.json" —shape=INPUT:1,1 -f perf_analyze_medium_result.csv.csv —verbose-csv —collect-metrics —metrics-url "localhost:8002/metrics"
-   ```
+```
 
 ### Key Configuration Notes
 - **Model Selection**: The `config.json` file controls which model version is used
