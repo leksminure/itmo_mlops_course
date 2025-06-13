@@ -59,6 +59,8 @@ git add large_file.pt   # LFS auto-handles tracked files
 git commit -m "Add model"
 git push
 ```
+## How to use Snakemake:
+    snakemake --cores 1 --snakefile src/mlops_course_project/Snakefile
 
 ## Setup ClearML server
 
@@ -103,3 +105,45 @@ local_csv = preprocess_task.artifacts['data'].get_local_copy()
 
 4. Navigate to the `ClearML` web interface and see the results. By default, it
    is available on `http://localhost:8080`.
+
+## Deploy via Triton Inference Server
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Models directory configured (already set up)
+
+### Step-by-Step Deployment
+
+1. **Start Triton Server**  
+   Build and launch the service:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+2. **Run Business Logic Client**  
+   Execute the client script:
+   ```bash
+   python triton_server/client/bls.py
+   ```
+
+3. **Configure Model Selection**  
+   Edit the configuration file to select your model:  
+   `triton_server/models/topic_classification_bls/1/config.json`  
+   Set `"model_name"` to either `"soft"`, `"medium"`, or `"rigid"`
+
+4. **Measure Quality Metrics**  
+   Test model accuracy and F1-score:
+   ```bash
+   python triton_server/client/test_performance.py
+   ```
+
+5. **Measure Efficiency Metrics**  
+   Run performance analyzer for a specific model:
+   ```bash
+perf_analyzer -m "medium" -u "localhost:8000" —concurrency-range=1 —measurement "20000" —input-data "/client/test_data.json" —shape=INPUT:1,1 -f perf_analyze_medium_result.csv.csv —verbose-csv —collect-metrics —metrics-url "localhost:8002/metrics"
+   ```
+
+### Key Configuration Notes
+- **Model Selection**: The `config.json` file controls which model version is used
+- **Test Data**: `test_data.json` contains sample inputs for performance testing
+- **Output Files**: Results are saved as CSV or .md files (e.g., `perf_analyze_soft_result.csv` and `perfomance_report.md`)
