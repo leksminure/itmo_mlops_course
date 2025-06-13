@@ -1,0 +1,68 @@
+optuna_pars:
+  n_trials: 1
+  n_folds: 5
+  random_seed: 42
+
+vectorizers:
+  vectorizer_types: ["tfidf", "count"]
+  tfidf:
+    ngram_range:
+      type: categorical
+      options: ["${as_tuple:1,1}", "${as_tuple:1,2}"]
+    max_df:
+      type: float
+      low: 0.75
+      high: 1.0
+    min_df:
+      type: int
+      low: 1
+      high: 5
+    use_idf:
+      type: categorical
+      options: [True, False]
+
+  count:
+    ngram_range:
+      type: categorical
+      options: ["${as_tuple:1,1}", "${as_tuple:1,2}"]
+    max_df:
+      type: float
+      low: 0.75
+      high: 1.0
+    min_df:
+      type: int
+      low: 1
+      high: 5
+
+models:
+  model_types: ["logreg", "svm", "random_forest"]
+
+  logreg:
+    C:
+      type: float
+      low: 0.01
+      high: 100.0
+      log: true
+
+  svm:
+    C:
+      type: float
+      low: 0.01
+      high: 100.0
+      log: true
+    kernel:
+      type: categorical
+      options: ["linear", "rbf"]
+
+  random_forest:
+    n_estimators:
+      type: int
+      low: 100
+      high: 500
+    max_depth:
+      type: int
+      low: 5
+      high: 50
+
+dataset:
+  sample_size: 1000

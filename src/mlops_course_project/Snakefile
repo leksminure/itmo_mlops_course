@@ -1,0 +1,87 @@
+# Snakefile
+import os
+from pathlib import Path
+from datetime import datetime
+
+PROCESSING_CONFIGS = [Path(f).stem for f in os.listdir("src/mlops_course_project/conf/processing") if f.endswith(".yaml")]
+GIT_LFS_PATTERNS = [
+    "data/raw/*.csv",
+    "data/processed/**/*.csv",
+    "models/**/*.joblib",
+    "results/*.csv"
+    "results/*.txt"
+]
+
+TARGETS = [
+    *[f"data/processed/{proc}/test_df.csv" for proc in PROCESSING_CONFIGS],
+    *[f"models/{proc}/best_model_{proc}.joblib" for proc in PROCESSING_CONFIGS],
+    "results/summary.csv",
+    f"reports/clearml_report_{datetime.now().strftime("%Y%m%d")}.txt"
+]
+
+rule all:
+    input:
+        TARGETS,
+
+rule smudge_raw_data:
+    output:
+        "data/raw/lenta_ru_10k_sample.csv"
+    shell:
+        """
+        git config --global --add safe.directory /app
+        git fetch origin hw_2:hw_2
+        git cat-file blob hw_2:data/raw/lenta_ru_10k_sample.csv | git lfs smudge > {output}
+        """
+
+rule process_data:
+    input:
+        "data/raw/lenta_ru_10k_sample.csv"
+    output:
+        processed_dir = directory("data/processed/{processing}/"),
+        train = "data/processed/{processing}/train_df.csv",
+        val = "data/processed/{processing}/val_df.csv",
+        test = "data/processed/{processing}/test_df.csv"
+    params:
+        config_override = lambda wc: f"processing={wc.processing}",
+        lfs_track = lambda wc: f"data/processed/{wc.processing}/*.csv"
+    shell:
+        """
+        python src/mlops_course_project/processing.py {params.config_override}
+        git add {output.train} {output.val} {output.test}
+        """
+
+rule train_models:
+    input:
+        train = "data/processed/{processing}/train_df.csv",
+        val = "data/processed/{processing}/val_df.csv",
+        test = "data/processed/{processing}/test_df.csv"
+    output:
+        model = "models/{processing}/best_model_{processing}.joblib",
+    params:
+        config_override = lambda wc: f"processing_name={wc.processing}"
+    shell:
+        """
+        python src/mlops_course_project/train_model.py +{params.config_override}
+        git add {output.model}
+        """
+
+rule evaluate_models:
+    input:
+        models = expand("models/{processing}/best_model_{processing}.joblib", processing=PROCESSING_CONFIGS),
+        tests = expand("data/processed/{processing}/test_df.csv", processing=PROCESSING_CONFIGS)
+    output:
+        summary = "results/summary.csv",
+    shell:
+        """
+        python src/mlops_course_project/evaluate_models.py
+        git add {output.summary}
+        """
+
+rule generate_report:
+    output:
+        report = f"reports/clearml_report_{datetime.now().strftime("%Y%m%d")}.txt"
+    shell:
+        """
+        python src/mlops_course_project/generate_report_from_clearml.py
+        git add {output.report}
+        """

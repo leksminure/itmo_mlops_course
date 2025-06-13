@@ -1,0 +1,14 @@
+{
+    "fix_unicode": true,
+    "to_ascii": false,
+    "lower": false,
+    "no_line_breaks": false,
+    "no_urls": false,
+    "no_emails": false,
+    "no_phone_numbers": false,
+    "no_numbers": false,
+    "no_digits": false,
+    "no_currency_symbols": false,
+    "no_punct": false,
+    "lang": "ru"
+}
