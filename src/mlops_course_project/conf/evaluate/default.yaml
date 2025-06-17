@@ -1,0 +1,6 @@
+models_dir: "${paths.models_dir}"
+processed_datasets_dir: "${paths.base_dir}/processed/"
+to_validate_file_name: "test_df.csv"
+result_file_name: "summary.csv"
+validation_results_dir: "results/"
+essential_columns: ${as_set:"topic","text"}

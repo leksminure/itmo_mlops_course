@@ -1,0 +1,29 @@
+name: "topic_classification_bls"
+backend: "python"
+max_batch_size: 8
+
+parameters: {
+  key: "EXECUTION_ENV_PATH",
+  value: {string_value: "/app/conda-pack.tar.gz"}
+}
+
+input [
+  {
+    name: "INPUT"
+    data_type: TYPE_STRING
+    dims: [ -1 ]
+  }
+]
+
+output [
+  {
+    name: "OUTPUT"
+    data_type: TYPE_STRING
+    dims: [ -1 ]
+  }
+]
+
+instance_group {
+  count: 1
+  kind: KIND_CPU
+}
