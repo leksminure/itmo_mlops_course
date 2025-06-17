@@ -147,3 +147,64 @@ perf_analyzer -m "medium" -u "localhost:8000" —concurrency-range=1 —measurem
 - **Model Selection**: The `config.json` file controls which model version is used
 - **Test Data**: `test_data.json` contains sample inputs for performance testing
 - **Output Files**: Results are saved as CSV or .md files (e.g., `perf_analyze_soft_result.csv` and `perfomance_report.md`)
+
+## Monitoring 
+
+#### **1. Configure Triton Metrics**  
+- Triton automatically exposes metrics on port `8002` at `/metrics`.  
+- Ensure your metrics (from `model.py`) are correctly collected and visible:  
+  ```bash
+  curl localhost:8002/metrics
+  ```
+
+---
+
+#### **2. Set Up Prometheus**  
+**Update docker-compose.yml:**
+```yaml
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    network_mode: host
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+```  
+
+**Config (`prometheus.yml`)**:
+```yaml
+scrape_configs:
+  - job_name: 'triton'
+    static_configs:
+      - targets: ['triton-server-ip:8002']  # Replace with your Triton IP
+```
+
+---
+
+#### **3. Set Up Grafana**  
+**Update docker-compose.yml:**  
+```yaml
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    network_mode: host
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./metrics/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./metrics/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./metrics/grafana/dashboards:/etc/grafana/dashboards
+```  
+
+**Configure**:  
+1. Access `http://localhost:3000` (default login: `admin/admin`).  
+2. **Add Data Source** → Select **Prometheus** → Set URL: `http://prometheus-ip:9090`. 
+3. Create Grafana Dashboard:  **New Dashboard** → **Add Visualization**.
+
+#### **4. Verify**  
+- Check Grafana Dashboards: `http://localhost:3000/dashboards`
