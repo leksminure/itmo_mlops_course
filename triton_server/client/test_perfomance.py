@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print(f"Testing {model} model...")
         test_data_path = f"./data/processed/{model}/test_df.csv"
         test_data = pd.read_csv(test_data_path)
-        metrics = test_model_performance(client, f"inference_{model}", test_data)
+        metrics = test_model_performance(client, model, test_data)
         
         report += (
             f"| {model} | {metrics['accuracy']:.4f} | {metrics['f1']:.4f} |\n"
