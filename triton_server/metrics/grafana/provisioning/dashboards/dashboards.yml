@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: 'Prometheus Dashboard'
+    orgId: 1
+    folder: 'Triton Dashboards'
+    type: file
+    options:
+      path: /etc/grafana/dashboards
